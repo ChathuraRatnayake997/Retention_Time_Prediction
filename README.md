@@ -1,47 +1,27 @@
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 720px; margin: 30px auto; padding: 20px; text-align: center; line-height: 1.5; color: #24292e;">
+# HPLC Retention Time Prediction
 
-  <!-- Project Title -->
-  <h1 style="font-size: 28px; font-weight: 600; margin-bottom: 5px;">
-    HPLC Retention Time Prediction
-  </h1>
-  <p style="font-size: 18px; color: #586069; margin-top: 0;">
-    Predicting Retention Times with Machine Learning using Ridge Regression
-  </p>
+A machine learning project for predicting High-Performance Liquid Chromatography (HPLC) retention times using a **Ridge Regression** model.
 
-  <!-- Live Project Link -->
-  <div style="margin: 30px 0;">
-    <a href="https://chathuraratnayake997.github.io/Retention_Time_Prediction/"
-       target="_blank"
-       rel="noopener noreferrer"
-       style="font-size: 16px; color: #0366d6; text-decoration: none; border-bottom: 1px solid #e1e4e8; padding-bottom: 2px;">
-       Visit Project Website
-    </a>
-  </div>
+---
 
-  <!-- Divider -->
-  <hr style="border: none; border-top: 1px solid #e1e4e8; margin: 25px 0;">
+###  Live Project
 
-  <!-- Performance Metrics -->
-  <div style="display: flex; justify-content: space-around; align-items: center; width: 100%;">
-    
-    <!-- RMSE -->
-    <div>
-      <p style="margin: 0; font-size: 14px; color: #586069;">RMSE (minutes)</p>
-      <p style="margin: 4px 0 0 0; font-size: 26px; font-weight: 600;">2.262</p>
-    </div>
+You can view and interact with the live project at the following link:
 
-    <!-- R² Score -->
-    <div>
-      <p style="margin: 0; font-size: 14px; color: #586069;">R² Score</p>
-      <p style="margin: 4px 0 0 0; font-size: 26px; font-weight: 600;">0.633</p>
-    </div>
+**[Visit the Website &rarr;](https://chathuraratnayake997.github.io/Retention_Time_Prediction/)**
 
-    <!-- MAE -->
-    <div>
-      <p style="margin: 0; font-size: 14px; color: #586069;">MAE (minutes)</p>
-      <p style="margin: 4px 0 0 0; font-size: 26px; font-weight: 600;">1.605</p>
-    </div>
+---
 
-  </div>
+### Model Performance
 
-</div>
+The performance of the trained model is summarized by the following metrics:
+
+| Metric                | Score   |
+| --------------------- | ------- |
+| **R² Score**          | `0.633` |
+| **MAE** (minutes)     | `1.605` |
+| **RMSE** (minutes)    | `2.262` |
+
+-   **R² Score (Coefficient of Determination):** Indicates that the model explains approximately 63.3% of the variance in the retention times.
+-   **MAE (Mean Absolute Error):** On average, the model's predictions are off by about 1.6 minutes.
+-   **RMSE (Root Mean Squared Error):** A measure of the error magnitude, giving higher weight to larger errors.
