@@ -2,7 +2,7 @@
 
 [![Visit the Live App](https://img.shields.io/badge/Visit_the-Live_App-blue?style=for-the-badge&logo=streamlit)](https://chathuraratnayake997.github.io/Retention_Time_Prediction/)
 
-A machine learning project for predicting High-Performance Liquid Chromatography (HPLC) retention times using a **Ridge Regression** model. The model is trained on molecular descriptors to estimate how long a compound will take to travel through an HPLC column.
+A machine learning project for predicting Retention times using a **Ridge Regression** model.
 
 ---
 
@@ -34,4 +34,4 @@ The performance of the trained Ridge Regression model is summarized by the follo
 
 -   **Model:** Scikit-learn (Ridge Regression)
 -   **Data Manipulation:** Pandas, NumPy
--   **Web App:** Streamlit
+-   **Web App:** Html, css, js
