@@ -1,6 +1,6 @@
 # Retention Time Prediction with Machine Learning
 
-[![Visit the Live App](https://img.shields.io/badge/Visit_the-Live_App-blue?style=for-the-badge&logo=streamlit)](https://chathuraratnayake997.github.io/Retention_Time_Prediction/)
+[![Visit the Live App](https://img.shields.io/badge/Visit_the-Live_App-blue?style=for-the-badge&logo=)](https://chathuraratnayake997.github.io/Retention_Time_Prediction/)
 
 A machine learning project for predicting Retention times using a **Ridge Regression** model.
 
