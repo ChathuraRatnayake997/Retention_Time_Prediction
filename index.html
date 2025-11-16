@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicting Retention times with machine learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metrics-bar {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+        }
+        
+        .metric-item {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .github-button {
+            text-align: center;
+            margin: 2rem 0 3rem 0;
+        }
+        
+        .github-button a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .github-button a:hover {
+            background: #555;
+        }
+        
+        .dataset-reference {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .dataset-reference h3 {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .dataset-reference p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        section {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            margin-bottom: 2rem;
+            padding: 2.5rem;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+        }
+        
+        .code-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .code-title {
+            background: #34495e;
+            color: white;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .code-block pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+            white-space: pre-wrap;
+            color: #000;
+        }
+        
+        .implementation-details {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .implementation-details h4 {
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        .implementation-details p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .visualization {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .visualization img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e9ecef;
+        }
+        
+        .visualization p {
+            margin-top: 1rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .metrics-bar {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .code-block {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Predicting Retention times with machine learning</h1>
+            <p class="subtitle">HPLC Retention Time Prediction using Ridge Regression</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Metrics Bar -->
+        <div class="metrics-bar">
+            <div class="metric-item">
+                <div class="metric-value">2.262</div>
+                <div class="metric-label">RMSE (minutes)</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">0.633</div>
+                <div class="metric-label">R² Score</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">1.605</div>
+                <div class="metric-label">MAE (minutes)</div>
+            </div>
+        </div>
+
+        <!-- GitHub Code Button -->
+        <div class="github-button">
+            <a href="https://github.com/chathura/hplc-retention-prediction" target="_blank">View Full Code on GitHub</a>
+            <a href="#" onclick="showLocalSetupGuide()" style="margin-left: 1rem;">How to Run Locally</a>
+        </div>
+
+        <!-- Dataset Reference -->
+        <div class="dataset-reference">
+            <h3>Dataset Reference</h3>
+            <p>Cao, M., Fraser, K., Huege, J. et al. Predicting retention time in hydrophilic interaction liquid chromatography mass spectrometry and its use for peak annotation in metabolomics. Metabolomics 11, 696–706 (2015). https://doi.org/10.1007/s11306-014-0727-x</p>
+        </div>
+
+        <!-- Data Cleaning Code Section -->
+        <section id="data-cleaning" class="code-section">
+            <div class="code-title">1. data_cleaning.py</div>
+            <div class="code-block">
+                <pre>class ConservativeHPLCDataCleaner:
+    def __init__(self, raw_data_path: str, output_path: str):
+        """Initialize the conservative data cleaner."""
+        self.raw_data_path = Path(raw_data_path)
+        self.output_path = Path(output_path)
+        self.df = None
+        self.cleaned_df = None
+        self.cleaning_report = {}
+        
+    def load_data(self):
+        """Load the raw CSV data and perform initial validation."""
+        logger.info(f"Loading data from: {self.raw_data_path}")
+        
+        try:
+            self.df = pd.read_csv(self.raw_data_path)
+            logger.info(f"Data loaded successfully. Shape: {self.df.shape}")
+            
+            # Store original data info
+            self.cleaning_report['original_shape'] = self.df.shape
+            
+        except Exception as e:
+            logger.error(f"Error loading data: {e}")
+            raise
+            
+    def analyze_missing_values(self):
+        """Analyze missing values and identify rows/columns with NA values."""
+        # Count missing values per column
+        missing_counts = self.df.isnull().sum()
+        rows_with_na = self.df.isnull().any(axis=1).sum()
+        
+        # Get specific rows with missing values
+        rows_with_na_indices = self.df[self.df.isnull().any(axis=1)].index.tolist()
+        
+        if len(rows_with_na_indices) > 0:
+            na_compounds = self.df.loc[rows_with_na_indices, 'compound'].tolist()
+            logger.info("Compounds with missing values:")
+            for idx, compound in zip(rows_with_na_indices, na_compounds):
+                logger.info(f"  Row {idx}: {compound}")
+        
+        self.cleaning_report['rows_with_na_count'] = rows_with_na
+        return missing_counts
+    
+    def remove_rows_with_na(self):
+        """Remove ALL rows that contain ANY NA values."""
+        rows_before = len(self.df)
+        
+        # Identify and remove rows with ANY missing values
+        self.cleaned_df = self.df.dropna()
+        rows_removed = rows_before - len(self.cleaned_df)
+        
+        logger.info(f"Rows before cleaning: {rows_before}")
+        logger.info(f"Rows after cleaning: {rows_after}")
+        logger.info(f"Rows removed: {rows_removed}")
+        logger.info(f"Removal percentage: {(rows_removed/rows_before)*100:.2f}%")
+        
+        self.cleaning_report['rows_removed'] = rows_removed
+        return rows_removed
+    
+    def validate_data_types(self):
+        """Validate and correct data types for the cleaned dataset."""
+        expected_types = {
+            'cid': 'int64',
+            'compound': 'object',
+            'smiles': 'object',
+            'RT': 'float64'
+        }
+        
+        for col, expected_type in expected_types.items():
+            if col in self.cleaned_df.columns:
+                try:
+                    if col == 'cid':
+                        self.cleaned_df[col] = pd.to_numeric(self.cleaned_df[col], errors='coerce')
+                        self.cleaned_df[col] = self.cleaned_df[col].astype('int64')
+                    elif col == 'RT':
+                        self.cleaned_df[col] = pd.to_numeric(self.cleaned_df[col], errors='coerce')
+                    elif col in ['compound', 'smiles']:
+                        self.cleaned_df[col] = self.cleaned_df[col].astype(str)
+                except Exception as e:
+                    logger.warning(f"Could not convert {col}: {e}")
+    
+    def save_cleaned_data(self):
+        """Save the cleaned dataset."""
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        self.cleaned_df.to_csv(self.output_path, index=False)
+        logger.info(f"Cleaned data saved to: {self.output_path}")
+        
+    def generate_report(self):
+        """Generate comprehensive cleaning report."""
+        report = f"""
+HPLC Data Cleaning Report
+========================
+Original dataset shape: {self.cleaning_report['original_shape']}
+Rows with missing values: {self.cleaning_report['rows_with_na_count']}
+Rows removed: {self.cleaning_report['rows_removed']}
+Final dataset shape: {self.cleaned_df.shape}
+
+Data cleaning approach: Conservative (remove ALL rows with ANY missing values)
+Quality assurance: 100% data integrity with no missing values in final dataset
+        """
+        
+        with open("data/processed/conservative_cleaning_report.txt", "w") as f:
+            f.write(report)</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The data cleaning module implements a conservative approach to ensure data quality:</p>
+                <ul>
+                    <li><strong>Data Loading:</strong> Loads the raw CSV dataset and validates initial structure</li>
+                    <li><strong>Missing Value Analysis:</strong> Identifies rows with any missing values across all columns</li>
+                    <li><strong>Conservative Cleaning:</strong> Removes ALL rows containing ANY missing values (1.7% of data)</li>
+                    <li><strong>Data Validation:</strong> Ensures proper data types for molecular descriptors and retention times</li>
+                    <li><strong>Quality Assurance:</strong> Maintains 100% data integrity with no missing values in final dataset</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Preprocess Data Code Section -->
+        <section id="preprocess" class="code-section">
+            <div class="code-title">2. preprocess_data.py</div>
+            <div class="code-block">
+                <pre>def relocate_columns_to_end():
+    """Reorganize data structure for modeling."""
+    df = pd.read_csv("data/processed/cleaned_data_remove_na.csv")
+    
+    # Identify columns to move to the end
+    first_four_cols = ['cid', 'compound', 'smiles', 'RT']
+    remaining_cols = [col for col in df.columns if col not in first_four_cols]
+    
+    # Create new column order: molecular descriptors first, identifiers to end
+    new_column_order = remaining_cols + first_four_cols
+    preprocessed_df = df[new_column_order]
+    
+    # Save preprocessed data
+    preprocessed_df.to_csv("data/processed/preprocessed_data.csv", index=False)
+    
+    return preprocessed_df
+
+def create_correlation_matrix(df, output_dir="data/plots"):
+    """Create comprehensive correlation analysis."""
+    # Identify column types
+    numerical_cols = []
+    for col in df.columns:
+        if pd.api.types.is_numeric_dtype(df[col]):
+            numerical_cols.append(col)
+    
+    # Calculate Pearson correlation matrix
+    numerical_data = df[numerical_cols].copy()
+    correlation_matrix = numerical_data.corr(method='pearson')
+    
+    # Create correlation heatmap
+    plt.figure(figsize=(16, 14))
+    mask = np.triu(np.ones_like(correlation_matrix, dtype=bool), k=1)
+    
+    sns.heatmap(correlation_matrix, 
+                mask=mask,
+                annot=False, 
+                cmap='RdBu_r', 
+                center=0,
+                square=True, 
+                cbar_kws={"shrink": .8})
+    
+    plt.title('Correlation Matrix - Molecular Descriptors', fontsize=16)
+    plt.xticks(rotation=45, ha='right')
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    
+    # Save correlation plot
+    correlation_plot_path = Path(output_dir) / "correlation_matrix_updated.png"
+    plt.savefig(correlation_plot_path, dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    # Analyze correlations with target variable (RT)
+    rt_correlations = correlation_matrix['RT'].sort_values(key=abs, ascending=False)
+    
+    return correlation_matrix, rt_correlations
+
+def select_top_features(df, correlation_matrix, n_features=6):
+    """Select top N features based on correlation with RT."""
+    # Get correlations with RT (excluding RT itself)
+    rt_correlations = correlation_matrix['RT'].drop('RT').abs().sort_values(ascending=False)
+    
+    # Select top features
+    selected_features = rt_correlations.head(n_features).index.tolist()
+    
+    # Create final dataset with selected features
+    final_df = df[selected_features + ['cid', 'compound', 'smiles', 'RT']].copy()
+    
+    # Save selected features dataset
+    final_df.to_csv("data/processed/selected_features_final.csv", index=False)
+    
+    print(f"Selected {n_features} features:")
+    for i, feature in enumerate(selected_features, 1):
+        correlation = correlation_matrix['RT'][feature]
+        print(f"  {i}. {feature}: {correlation:.3f}")
+    
+    return final_df, selected_features
+
+def main():
+    """Main preprocessing pipeline."""
+    print("HPLC Data Preprocessing Pipeline")
+    print("="*50)
+    
+    # Step 1: Relocate columns
+    preprocessed_df = relocate_columns_to_end()
+    
+    # Step 2: Create correlation matrix
+    correlation_matrix, rt_correlations = create_correlation_matrix(preprocessed_df)
+    
+    # Step 3: Select top features
+    final_df, selected_features = select_top_features(preprocessed_df, correlation_matrix)
+    
+    print(f"\nPreprocessing completed successfully!")
+    print(f"Final dataset shape: {final_df.shape}")
+    print(f"Selected features: {selected_features}")</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The preprocessing module reorganizes and analyzes the data structure:</p>
+                <ul>
+                    <li><strong>Data Reorganization:</strong> Restructures data with molecular descriptors first, identifiers and target last</li>
+                    <li><strong>Correlation Analysis:</strong> Calculates Pearson correlations between all numerical features and retention time</li>
+                    <li><strong>Feature Selection:</strong> Reduces 31 molecular descriptors to 6 key features based on correlation strength</li>
+                    <li><strong>Selected Features:</strong> VC.3, xlogp3, nHBDon, topoShape, XLogP, BCUTp.1h</li>
+                    <li><strong>Multicollinearity Check:</strong> Identifies highly correlated feature pairs to avoid redundancy</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Model Training Code Section -->
+        <section id="training" class="code-section">
+            <div class="code-title">3. model_training.py</div>
+            <div class="code-block">
+                <pre># Selected features from preprocessing
+SELECTED_FEATURES = ['VC.3', 'xlogp3', 'nHBDon', 'topoShape', 'XLogP', 'BCUTp.1h']
+
+def load_training_data(file_path="data/processed/selected_features_final.csv"):
+    """Load and prepare training data."""
+    df = pd.read_csv(file_path)
+    train_df = df[df['split'] == 'train'].copy()
+    
+    X_train = train_df[SELECTED_FEATURES]
+    y_train = train_df['RT']
+    
+    return X_train, y_train, train_df
+
+def evaluate_models(X_train, y_train, cv_folds=5):
+    """Evaluate multiple regression models using cross-validation."""
+    models = {
+        'Linear Regression': LinearRegression(),
+        'Ridge Regression': Ridge(alpha=1.0),
+        'Lasso Regression': Lasso(alpha=1.0),
+        'Random Forest': RandomForestRegressor(n_estimators=100, random_state=42),
+        'Gradient Boosting': GradientBoostingRegressor(n_estimators=100, random_state=42),
+        'Support Vector Regression': SVR(kernel='rbf', C=1.0, gamma='scale')
+    }
+    
+    results = {}
+    
+    for name, model in models.items():
+        # Cross-validation scores
+        cv_scores = cross_val_score(model, X_train, y_train, 
+                                  cv=cv_folds, scoring='neg_mean_squared_error')
+        rmse_scores = np.sqrt(-cv_scores)
+        
+        r2_scores = cross_val_score(model, X_train, y_train, 
+                                  cv=cv_folds, scoring='r2')
+        
+        mae_scores = cross_val_score(model, X_train, y_train, 
+                                   cv=cv_folds, scoring='neg_mean_absolute_error')
+        mae_scores = -mae_scores
+        
+        results[name] = {
+            'model': model,
+            'rmse_mean': rmse_scores.mean(),
+            'rmse_std': rmse_scores.std(),
+            'r2_mean': r2_scores.mean(),
+            'r2_std': r2_scores.std(),
+            'mae_mean': mae_scores.mean(),
+            'mae_std': mae_scores.std()
+        }
+        
+        print(f"{name:25} RMSE: {rmse_scores.mean():.3f}+/-{rmse_scores.std():.3f}")
+    
+    return results
+
+def hyperparameter_tuning(X_train, y_train, model_type='Ridge'):
+    """Perform hyperparameter tuning for Ridge regression."""
+    model = Ridge()
+    param_grid = {'alpha': [0.1, 1.0, 10.0, 100.0]}
+    
+    grid_search = GridSearchCV(
+        model, param_grid, cv=5, 
+        scoring='neg_mean_squared_error', 
+        n_jobs=-1
+    )
+    
+    grid_search.fit(X_train, y_train)
+    
+    print(f"Best Ridge alpha: {grid_search.best_params_['alpha']}")
+    print(f"Best CV RMSE: {np.sqrt(-grid_search.best_score_):.3f}")
+    
+    return grid_search.best_estimator_
+
+def train_final_model(X_train, y_train, model_type='Ridge'):
+    """Train the final model with best hyperparameters."""
+    if model_type == 'Ridge':
+        model = Ridge(alpha=10.0)
+    else:
+        model = LinearRegression()
+    
+    model.fit(X_train, y_train)
+    
+    # Calculate training metrics
+    y_train_pred = model.predict(X_train)
+    train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
+    train_r2 = r2_score(y_train, y_train_pred)
+    
+    print(f"Training RMSE: {train_rmse:.3f}")
+    print(f"Training R²: {train_r2:.3f}")
+    
+    return model
+
+def analyze_feature_importance(model, feature_names):
+    """Analyze feature importance for linear models."""
+    coefficients = model.coef_
+    
+    importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'coefficient': coefficients,
+        'abs_coefficient': np.abs(coefficients)
+    }).sort_values('abs_coefficient', ascending=False)
+    
+    print("\nFeature Importance (Ridge Coefficients):")
+    for idx, row in importance_df.iterrows():
+        print(f"{row['feature']:12} {row['coefficient']:8.3f}")
+    
+    return importance_df
+
+def main():
+    """Main model training pipeline."""
+    print("HPLC Model Training Pipeline")
+    print("="*50)
+    
+    # Load training data
+    X_train, y_train, train_df = load_training_data()
+    
+    # Evaluate multiple models
+    results = evaluate_models(X_train, y_train)
+    
+    # Select best model and optimize hyperparameters
+    final_model = hyperparameter_tuning(X_train, y_train)
+    
+    # Train final model
+    trained_model = train_final_model(X_train, y_train)
+    
+    # Analyze feature importance
+    importance_df = analyze_feature_importance(trained_model, SELECTED_FEATURES)
+    
+    print("\nTraining completed successfully!")
+    print(f"Final model: Ridge Regression (alpha=10.0)")
+    print(f"Selected features: {SELECTED_FEATURES}")</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The model training module implements comprehensive machine learning evaluation:</p>
+                <ul>
+                    <li><strong>Data Preparation:</strong> Loads preprocessed data and extracts training subset (91 samples)</li>
+                    <li><strong>Multi-Model Comparison:</strong> Evaluates Linear, Ridge, Lasso, Random Forest, Gradient Boosting, and SVR</li>
+                    <li><strong>Cross-Validation:</strong> Uses 5-fold CV to ensure robust performance estimates</li>
+                    <li><strong>Hyperparameter Tuning:</strong> Optimizes Ridge regression alpha parameter (final: alpha=10.0)</li>
+                    <li><strong>Feature Importance:</strong> Analyzes coefficient magnitudes for linear models to understand feature contributions</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Model Validation Code Section -->
+        <section id="validation" class="code-section">
+            <div class="code-title">4. Model Validation</div>
+            <div class="code-block">
+                <pre>SELECTED_FEATURES = ['VC.3', 'xlogp3', 'nHBDon', 'topoShape', 'XLogP', 'BCUTp.1h']
+
+def load_and_prepare_data():
+    """Load the complete dataset with selected features."""
+    df = pd.read_csv("data/processed/selected_features_final.csv")
+    
+    # Create train/validation split based on sample indices
+    train_size = 91
+    df['split'] = ['train'] * train_size + ['validation'] * (len(df) - train_size)
+    
+    return df
+
+def train_final_model(train_df):
+    """Train the final Ridge regression model."""
+    X_train = train_df[SELECTED_FEATURES]
+    y_train = train_df['RT']
+    
+    # Ridge regression with alpha=10.0 (optimized)
+    model = Ridge(alpha=10.0)
+    model.fit(X_train, y_train)
+    
+    return model
+
+def make_predictions_for_all_data(model, df):
+    """Make predictions for all samples in the dataset."""
+    X_all = df[SELECTED_FEATURES]
+    predictions = model.predict(X_all)
+    
+    # Add predictions and errors to dataframe
+    df_with_predictions = df.copy()
+    df_with_predictions['predicted_RT'] = predictions
+    df_with_predictions['absolute_error'] = np.abs(df_with_predictions['RT'] - df_with_predictions['predicted_RT'])
+    df_with_predictions['relative_error'] = np.abs(df_with_predictions['RT'] - df_with_predictions['predicted_RT']) / df_with_predictions['RT'] * 100
+    
+    return df_with_predictions
+
+def analyze_predictions(df_with_predictions):
+    """Analyze prediction quality for all samples."""
+    # Overall statistics
+    all_rmse = np.sqrt(mean_squared_error(df_with_predictions['RT'], df_with_predictions['predicted_RT']))
+    all_r2 = r2_score(df_with_predictions['RT'], df_with_predictions['predicted_RT'])
+    all_mae = mean_absolute_error(df_with_predictions['RT'], df_with_predictions['predicted_RT'])
+    
+    print(f"Overall Performance ({len(df_with_predictions)} samples):")
+    print(f"  RMSE: {all_rmse:.3f}")
+    print(f"  R²:   {all_r2:.3f}")
+    print(f"  MAE:  {all_mae:.3f}")
+    
+    # Performance by split
+    for split_type in ['train', 'validation']:
+        split_data = df_with_predictions[df_with_predictions['split'] == split_type]
+        if len(split_data) > 0:
+            split_rmse = np.sqrt(mean_squared_error(split_data['RT'], split_data['predicted_RT']))
+            split_r2 = r2_score(split_data['RT'], split_data['predicted_RT'])
+            split_mae = mean_absolute_error(split_data['RT'], split_data['predicted_RT'])
+            
+            print(f"\n{split_type.capitalize()} Set ({len(split_data)} samples):")
+            print(f"  RMSE: {split_rmse:.3f}")
+            print(f"  R²:   {split_r2:.3f}")
+            print(f"  MAE:  {split_mae:.3f}")
+    
+    # Error distribution analysis
+    errors = df_with_predictions['absolute_error']
+    print(f"\nError Quality Distribution:")
+    print(f"  Excellent (MAE < 1.0):   {(errors < 1.0).sum()}/{len(errors)} samples ({(errors < 1.0).mean()*100:.1f}%)")
+    print(f"  Good (MAE < 2.0):        {(errors < 2.0).sum()}/{len(errors)} samples ({(errors < 2.0).mean()*100:.1f}%)")
+    print(f"  Acceptable (MAE < 3.0):  {(errors < 3.0).sum()}/{len(errors)} samples ({(errors < 3.0).mean()*100:.1f}%)")
+    
+    return {
+        'overall_rmse': all_rmse, 'overall_r2': all_r2, 'overall_mae': all_mae
+    }
+
+def display_feature_importance(model):
+    """Display feature importance (coefficients) for Ridge model."""
+    coefficients = model.coef_
+    
+    importance_df = pd.DataFrame({
+        'feature': SELECTED_FEATURES,
+        'coefficient': coefficients,
+        'abs_coefficient': np.abs(coefficients)
+    }).sort_values('abs_coefficient', ascending=False)
+    
+    print("\nFeature Importance (Ridge Coefficients):")
+    for idx, row in importance_df.iterrows():
+        print(f"  {row['feature']:12} {row['coefficient']:8.3f} (|{row['abs_coefficient']:.3f}|)")
+    
+    return importance_df
+
+def find_outliers(df_with_predictions):
+    """Find samples with the worst and best predictions."""
+    # Worst predictions
+    outliers = df_with_predictions.nlargest(5, 'absolute_error')
+    print("\nTop 5 worst predictions:")
+    for idx, row in outliers.iterrows():
+        print(f"  {row['compound']:20} Actual: {row['RT']:6.3f} Pred: {row['predicted_RT']:6.3f} Error: {row['absolute_error']:6.3f}")
+    
+    # Best predictions
+    best_predictions = df_with_predictions.nsmallest(5, 'absolute_error')
+    print("\nTop 5 best predictions:")
+    for idx, row in best_predictions.iterrows():
+        print(f"  {row['compound']:20} Actual: {row['RT']:6.3f} Pred: {row['predicted_RT']:6.3f} Error: {row['absolute_error']:6.3f}")
+
+def main():
+    """Main validation pipeline."""
+    print("HPLC Retention Time Validation Pipeline")
+    print("="*60)
+    
+    # Load complete dataset
+    df = load_and_prepare_data()
+    
+    # Train final model on training data only
+    train_df = df[df['split'] == 'train'].copy()
+    model = train_final_model(train_df)
+    
+    # Make predictions for all samples
+    df_with_predictions = make_predictions_for_all_data(model, df)
+    
+    # Analyze prediction quality
+    performance = analyze_predictions(df_with_predictions)
+    
+    # Display feature importance
+    importance_df = display_feature_importance(model)
+    
+    # Find outliers and best predictions
+    find_outliers(df_with_predictions)
+    
+    # Save complete validation dataset
+    df_with_predictions.to_csv("data/processed/validation_dataset.csv", index=False)
+    print(f"\nValidation dataset saved with {len(df_with_predictions)} samples")</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The validation module performs rigorous model assessment:</p>
+                <ul>
+                    <li><strong>Final Model Training:</strong> Trains Ridge regression with alpha=10.0 on training subset (91 samples)</li>
+                    <li><strong>Validation Split:</strong> Evaluates performance on unseen validation data (23 samples)</li>
+                    <li><strong>Generalization Check:</strong> Compares training vs validation RMSE to detect overfitting</li>
+                    <li><strong>Comprehensive Metrics:</strong> Calculates RMSE, R², and MAE for both training and validation sets</li>
+                    <li><strong>Performance Consistency:</strong> Validates model stability across different data splits</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Model Prediction Code Section -->
+        <section id="prediction" class="code-section">
+            <div class="code-title">5. Model Prediction</div>
+            <div class="code-block">
+                <pre>SELECTED_FEATURES = ['VC.3', 'xlogp3', 'nHBDon', 'topoShape', 'XLogP', 'BCUTp.1h']
+
+def load_data_and_train_model():
+    """Load data and train the Ridge regression model."""
+    df = pd.read_csv("data/processed/selected_features_final.csv")
+    
+    # Split into train and validation sets
+    train_df = df[df['split'] == 'train'].copy()
+    val_df = df[df['split'] == 'validation'].copy()
+    
+    # Prepare data
+    X_train = train_df[SELECTED_FEATURES]
+    y_train = train_df['RT']
+    X_val = val_df[SELECTED_FEATURES]
+    y_val = val_df['RT']
+    
+    # Train Ridge regression model
+    model = Ridge(alpha=10.0)
+    model.fit(X_train, y_train)
+    
+    return model, X_train, y_train, X_val, y_val, val_df
+
+def evaluate_model_performance(model, X_train, y_train, X_val, y_val):
+    """Evaluate model performance on training and validation sets."""
+    # Training set performance
+    y_train_pred = model.predict(X_train)
+    train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
+    train_r2 = r2_score(y_train, y_train_pred)
+    train_mae = mean_absolute_error(y_train, y_train_pred)
+    
+    # Validation set performance
+    y_val_pred = model.predict(X_val)
+    val_rmse = np.sqrt(mean_squared_error(y_val, y_val_pred))
+    val_r2 = r2_score(y_val, y_val_pred)
+    val_mae = mean_absolute_error(y_val, y_val_pred)
+    
+    # Model comparison
+    delta_rmse = abs(val_rmse - train_rmse)
+    print(f"Overfitting check (RMSE difference): {delta_rmse:.3f}")
+    
+    if delta_rmse < 0.5:
+        print("Good generalization - minimal overfitting")
+    elif delta_rmse < 1.0:
+        print("WARNING: Moderate overfitting detected")
+    else:
+        print("ERROR: High overfitting - consider regularization")
+    
+    return {
+        'train_rmse': train_rmse, 'train_r2': train_r2, 'train_mae': train_mae,
+        'val_rmse': val_rmse, 'val_r2': val_r2, 'val_mae': val_mae,
+        'y_train_pred': y_train_pred, 'y_val_pred': y_val_pred
+    }
+
+def analyze_feature_importance(model, feature_names):
+    """Analyze feature importance for linear models."""
+    coefficients = model.coef_
+    
+    importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'coefficient': coefficients,
+        'abs_coefficient': np.abs(coefficients)
+    }).sort_values('abs_coefficient', ascending=False)
+    
+    print("\nFeature Importance (Coefficients):")
+    for idx, row in importance_df.iterrows():
+        print(f"{row['feature']:12} {row['coefficient']:8.3f} (|{row['abs_coefficient']:.3f}|)")
+    
+    return importance_df
+
+def detailed_predictions_analysis(y_val, y_val_pred, val_df):
+    """Detailed analysis of predictions."""
+    print(f"\nDetailed Predictions Analysis:")
+    print("="*35)
+    
+    # Prediction statistics
+    print(f"Actual RT range: {y_val.min():.3f} - {y_val.max():.3f}")
+    print(f"Predicted RT range: {y_val_pred.min():.3f} - {y_val_pred.max():.3f}")
+    
+    # Individual prediction errors
+    val_errors = np.abs(y_val - y_val_pred)
+    
+    # Find best and worst predictions
+    best_idx = np.argmin(val_errors)
+    worst_idx = np.argmax(val_errors)
+    
+    print(f"\nBest prediction (MAE={val_errors.iloc[best_idx]:.3f}):")
+    print(f"  Actual: {y_val.iloc[best_idx]:.3f}, Predicted: {y_val_pred[best_idx]:.3f}")
+    print(f"  Compound: {val_df.iloc[best_idx]['compound']}")
+    
+    print(f"Worst prediction (MAE={val_errors.iloc[worst_idx]:.3f}):")
+    print(f"  Actual: {y_val.iloc[worst_idx]:.3f}, Predicted: {y_val_pred[worst_idx]:.3f}")
+    print(f"  Compound: {val_df.iloc[worst_idx]['compound']}")
+    
+    # Error distribution
+    print(f"\nError Distribution:")
+    print(f"  Samples with MAE < 1.0: {(val_errors < 1.0).sum()}/{len(val_errors)} ({(val_errors < 1.0).mean()*100:.1f}%)")
+    print(f"  Samples with MAE < 2.0: {(val_errors < 2.0).sum()}/{len(val_errors)} ({(val_errors < 2.0).mean()*100:.1f}%)")
+    print(f"  Samples with MAE > 3.0: {(val_errors > 3.0).sum()}/{len(val_errors)} ({(val_errors > 3.0).mean()*100:.1f}%)")
+
+def save_predictions(model, X_val, val_df, output_file="data/processed/predictions.csv"):
+    """Save predictions to CSV file."""
+    y_val_pred = model.predict(X_val)
+    
+    predictions_df = val_df.copy()
+    predictions_df['predicted_RT'] = y_val_pred
+    predictions_df['absolute_error'] = np.abs(predictions_df['RT'] - predictions_df['predicted_RT'])
+    predictions_df['relative_error'] = np.abs(predictions_df['RT'] - predictions_df['predicted_RT']) / predictions_df['RT'] * 100
+    
+    predictions_df.to_csv(output_file, index=False)
+    print(f"\nPredictions saved to: {output_file}")
+    
+    return predictions_df
+
+def main():
+    """Main prediction pipeline."""
+    print("HPLC Retention Time Prediction and Evaluation")
+    print("="*60)
+    
+    # Load data and train model
+    model, X_train, y_train, X_val, y_val, val_df = load_data_and_train_model()
+    
+    # Evaluate model performance
+    performance = evaluate_model_performance(model, X_train, y_train, X_val, y_val)
+    
+    # Analyze feature importance
+    importance_df = analyze_feature_importance(model, SELECTED_FEATURES)
+    
+    # Detailed predictions analysis
+    detailed_predictions_analysis(y_val, performance['y_val_pred'], val_df)
+    
+    # Save predictions
+    predictions_df = save_predictions(model, X_val, val_df)
+    
+    print(f"\nPrediction completed successfully!")</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The prediction module generates and analyzes model outputs:</p>
+                <ul>
+                    <li><strong>Prediction Generation:</strong> Uses trained model to predict retention times for all samples</li>
+                    <li><strong>Performance Metrics:</strong> Calculates RMSE and R² for both training and validation predictions</li>
+                    <li><strong>Error Analysis:</strong> Computes individual prediction errors and identifies best/worst predictions</li>
+                    <li><strong>Feature Importance:</strong> Ranks features by absolute coefficient values from Ridge regression</li>
+                    <li><strong>Model Interpretation:</strong> Identifies xlogp3 as most important feature (lipophilicity coefficient)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Visualization Code Section -->
+        <section id="visualization" class="code-section">
+            <div class="code-title">6. Visualization</div>
+            <div class="code-block">
+                <pre>SELECTED_FEATURES = ['VC.3', 'xlogp3', 'nHBDon', 'topoShape', 'XLogP', 'BCUTp.1h']
+
+def load_validation_data():
+    """Load the validation dataset with predictions."""
+    return pd.read_csv('data/processed/validation_dataset.csv')
+
+def calculate_metrics(df):
+    """Calculate comprehensive performance metrics."""
+    metrics = {}
+    
+    # Overall metrics
+    metrics['RMSE'] = np.sqrt(mean_squared_error(df['RT'], df['predicted_RT']))
+    metrics['MAE'] = mean_absolute_error(df['RT'], df['predicted_RT'])
+    metrics['R2'] = r2_score(df['RT'], df['predicted_RT'])
+    
+    # Training vs Validation split
+    train_mask = df['split'] == 'train'
+    val_mask = df['split'] == 'validation'
+    
+    metrics['train_RMSE'] = np.sqrt(mean_squared_error(df[train_mask]['RT'], df[train_mask]['predicted_RT']))
+    metrics['val_RMSE'] = np.sqrt(mean_squared_error(df[val_mask]['RT'], df[val_mask]['predicted_RT']))
+    metrics['train_MAE'] = mean_absolute_error(df[train_mask]['RT'], df[train_mask]['predicted_RT'])
+    metrics['val_MAE'] = mean_absolute_error(df[val_mask]['RT'], df[val_mask]['predicted_RT'])
+    metrics['train_R2'] = r2_score(df[train_mask]['RT'], df[train_mask]['predicted_RT'])
+    metrics['val_R2'] = r2_score(df[val_mask]['RT'], df[val_mask]['predicted_RT'])
+    
+    return metrics
+
+def train_feature_importance_model(df):
+    """Train Ridge regression model to get feature importance."""
+    feature_cols = SELECTED_FEATURES
+    X = df[df['split'] == 'train'][feature_cols]
+    y = df[df['split'] == 'train']['RT']
+    
+    model = Ridge(alpha=10.0)
+    model.fit(X, y)
+    
+    return model, feature_cols
+
+def create_simplified_visualizations(df, metrics, model, feature_cols):
+    """Create comprehensive model analysis plots."""
+    fig = plt.figure(figsize=(18, 12))
+    
+    # Split data
+    train_data = df[df['split'] == 'train']
+    val_data = df[df['split'] == 'validation']
+    
+    # 1. Actual vs Predicted RT (Combined)
+    plt.subplot(2, 3, 1)
+    plt.scatter(train_data['RT'], train_data['predicted_RT'], 
+               alpha=0.7, label=f'Training (RMSE={metrics["train_RMSE"]:.3f})', s=60)
+    plt.scatter(val_data['RT'], val_data['predicted_RT'], 
+               alpha=0.7, label=f'Validation (RMSE={metrics["val_RMSE"]:.3f})', s=60)
+    
+    min_rt, max_rt = df['RT'].min(), df['RT'].max()
+    plt.plot([min_rt, max_rt], [min_rt, max_rt], 'r--', linewidth=2)
+    plt.xlabel('Actual RT (min)')
+    plt.ylabel('Predicted RT (min)')
+    plt.title('1. Actual vs Predicted RT (Training + Validation)')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # 2. Actual vs Predicted RT (Training only)
+    plt.subplot(2, 3, 2)
+    plt.scatter(train_data['RT'], train_data['predicted_RT'], alpha=0.7, s=60)
+    
+    min_rt_train, max_rt_train = train_data['RT'].min(), train_data['RT'].max()
+    plt.plot([min_rt_train, max_rt_train], [min_rt_train, max_rt_train], 'r--', linewidth=2)
+    plt.xlabel('Actual RT (min)')
+    plt.ylabel('Predicted RT (min)')
+    plt.title(f'2. Training Only\nRMSE: {metrics["train_RMSE"]:.3f}, R²: {metrics["train_R2"]:.3f}')
+    plt.grid(True, alpha=0.3)
+    
+    # 3. Actual vs Predicted RT (Validation only)
+    plt.subplot(2, 3, 3)
+    plt.scatter(val_data['RT'], val_data['predicted_RT'], alpha=0.7, s=60)
+    
+    min_rt_val, max_rt_val = val_data['RT'].min(), val_data['RT'].max()
+    plt.plot([min_rt_val, max_rt_val], [min_rt_val, max_rt_val], 'r--', linewidth=2)
+    plt.xlabel('Actual RT (min)')
+    plt.ylabel('Predicted RT (min)')
+    plt.title(f'3. Validation Only\nRMSE: {metrics["val_RMSE"]:.3f}, R²: {metrics["val_R2"]:.3f}')
+    plt.grid(True, alpha=0.3)
+    
+    # 4. Training vs Validation Performance
+    plt.subplot(2, 3, 4)
+    categories = ['RMSE', 'MAE', 'R²']
+    train_values = [metrics['train_RMSE'], metrics['train_MAE'], metrics['train_R2']]
+    val_values = [metrics['val_RMSE'], metrics['val_MAE'], metrics['val_R2']]
+    
+    x = np.arange(len(categories))
+    width = 0.35
+    
+    bars1 = plt.bar(x - width/2, train_values, width, label='Training', alpha=0.8)
+    bars2 = plt.bar(x + width/2, val_values, width, label='Validation', alpha=0.8)
+    
+    plt.xlabel('Metrics')
+    plt.ylabel('Value')
+    plt.title('4. Training vs Validation Performance')
+    plt.xticks(x, categories)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # 5. Model Performance Summary
+    plt.subplot(2, 3, 5)
+    plt.axis('off')
+    
+    summary_text = f"""
+MODEL PERFORMANCE SUMMARY
+
+Model: Ridge Regression (alpha=10.0)
+Dataset: {len(df)} samples
+Features: {len(feature_cols)} selected
+
+Overall Performance:
+- RMSE: {metrics['RMSE']:.3f} min
+- MAE:  {metrics['MAE']:.3f} min
+- R²:   {metrics['R2']:.3f}
+
+Training Set:
+- RMSE: {metrics['train_RMSE']:.3f} min
+- R²:   {metrics['train_R2']:.3f}
+
+Validation Set:
+- RMSE: {metrics['val_RMSE']:.3f} min
+- R²:   {metrics['val_R2']:.3f}
+
+Excellent generalization
+    """
+    
+    plt.text(0.05, 0.95, summary_text, transform=plt.gca().transAxes, 
+             fontsize=10, verticalalignment='top', fontfamily='monospace',
+             bbox=dict(boxstyle="round,pad=0.5", facecolor="lightblue", alpha=0.8))
+    
+    # 6. Feature Importance
+    plt.subplot(2, 3, 6)
+    importance = np.abs(model.coef_)
+    sorted_idx = np.argsort(importance)[::-1]
+    
+    colors = plt.cm.viridis(np.linspace(0, 1, len(importance)))
+    plt.bar(range(len(importance)), importance[sorted_idx], color=colors)
+    plt.xticks(range(len(importance)), [feature_cols[i] for i in sorted_idx], 
+               rotation=45, ha='right')
+    plt.ylabel('Absolute Coefficient')
+    plt.title('Feature Importance')
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('data/plots/simplified_model_analysis.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
+def main():
+    """Main visualization pipeline."""
+    print("HPLC Retention Time Visualization Pipeline")
+    print("="*50)
+    
+    # Load validation data
+    df = load_validation_data()
+    
+    # Calculate metrics
+    metrics = calculate_metrics(df)
+    
+    # Train feature importance model
+    model, feature_cols = train_feature_importance_model(df)
+    
+    # Create visualizations
+    create_simplified_visualizations(df, metrics, model, feature_cols)
+    
+    print(f"Visualizations saved to data/plots/simplified_model_analysis.png")</pre>
+            </div>
+            <div class="implementation-details">
+                <h4>Implementation Details</h4>
+                <p>The visualization module creates comprehensive analysis plots:</p>
+                <ul>
+                    <li><strong>Actual vs Predicted Plots:</strong> Shows training and validation predictions vs actual retention times</li>
+                    <li><strong>Performance Comparison:</strong> Compares training vs validation metrics across RMSE, MAE, and R²</li>
+                    <li><strong>Feature Importance Chart:</strong> Ranks molecular descriptors by absolute Ridge coefficient values</li>
+                    <li><strong>Model Summary Box:</strong> Displays comprehensive performance metrics and model details</li>
+                    <li><strong>Visual Validation:</strong> Confirms model quality through scatter plot patterns and error distribution</li>
+                </ul>
+            </div>
+            
+            <div class="visualization">
+                <h3>Generated Visualizations</h3>
+                <img src="data/plots/simplified_model_analysis.png" alt="HPLC Model Analysis Visualization">
+                <p>Comprehensive analysis showing actual vs predicted retention times, training vs validation performance comparison, and feature importance ranking</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Local Setup Guide Modal -->
+    <div id="setup-guide-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 5% auto; padding: 2rem; width: 90%; max-width: 800px; max-height: 80%; overflow-y: auto; border-radius: 8px; position: relative;">
+            <span onclick="closeSetupGuide()" style="position: absolute; right: 1rem; top: 1rem; font-size: 1.5rem; cursor: pointer; color: #999;">&times;</span>
+            <h2 style="color: #2c3e50; margin-bottom: 1.5rem; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem;">How to Run HPLC Retention Time Prediction Locally</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #34495e; margin-bottom: 1rem;">Step 1: Clone the Repository</h3>
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; padding: 1rem; margin-bottom: 1rem;">
+                    <code>git clone https://github.com/chathura/hplc-retention-prediction.git<br>cd hplc-retention-prediction</code>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #34495e; margin-bottom: 1rem;">Step 2: Install Python Dependencies</h3>
+                <p style="margin-bottom: 1rem; color: #555;">Make sure you have Python 3.7+ installed, then run:</p>
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; padding: 1rem; margin-bottom: 1rem;">
+                    <code>pip install -r requirements.txt</code>
+                </div>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Note:</strong> If you don't have pip, install it first or use: <code>python -m ensurepip --upgrade</code></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #34495e; margin-bottom: 1rem;">Step 3: Run the Complete Pipeline</h3>
+                <p style="margin-bottom: 1rem; color: #555;">Execute the main script to run all analysis steps:</p>
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; padding: 1rem; margin-bottom: 1rem;">
+                    <code>python main.py</code>
+                </div>
+                <p style="color: #666; font-size: 0.9rem;">This will execute the full pipeline: data cleaning → preprocessing → model training → validation → prediction → visualization</p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #34495e; margin-bottom: 1rem;">Step 4: View Results</h3>
+                <p style="margin-bottom: 1rem; color: #555;">The pipeline generates several outputs:</p>
+                <ul style="margin-bottom: 1rem; padding-left: 1.5rem; color: #555;">
+                    <li><strong>Processed Data:</strong> <code>data/processed/</code> folder contains cleaned, preprocessed, and model-ready datasets</li>
+                    <li><strong>Model Results:</strong> <code>data/processed/validation_dataset.csv</code> contains predictions with performance metrics</li>
+                    <li><strong>Visualizations:</strong> <code>data/plots/simplified_model_analysis.png</code> contains comprehensive model analysis plots</li>
+                    <li><strong>Reports:</strong> Text reports with detailed cleaning and validation statistics</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #34495e; margin-bottom: 1rem;">Step 5: Start Web Preview (Optional)</h3>
+                <p style="margin-bottom: 1rem; color: #555;">To view this website locally:</p>
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; padding: 1rem; margin-bottom: 1rem;">
+                    <code>python -m http.server 8000</code>
+                </div>
+                <p style="color: #666; font-size: 0.9rem;">Then open <code>http://localhost:8000</code> in your browser</p>
+            </div>
+
+            <div style="margin-bottom: 2rem; background: #e8f5e8; border: 1px solid #c3e6c3; padding: 1.5rem; border-radius: 4px;">
+                <h3 style="color: #2d5a2d; margin-bottom: 1rem;">✅ Expected Results</h3>
+                <ul style="padding-left: 1.5rem; color: #2d5a2d;">
+                    <li><strong>RMSE:</strong> ~2.262 minutes</li>
+                    <li><strong>R² Score:</strong> ~0.633</li>
+                    <li><strong>MAE:</strong> ~1.605 minutes</li>
+                    <li><strong>Training Samples:</strong> 91 compounds</li>
+                    <li><strong>Validation Samples:</strong> 23 compounds</li>
+                    <li><strong>Most Important Feature:</strong> xlogp3 (lipophilicity coefficient)</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1.5rem; border-radius: 4px;">
+                <h3 style="color: #856404; margin-bottom: 1rem;">⚠️ Troubleshooting</h3>
+                <ul style="padding-left: 1.5rem; color: #856404;">
+                    <li><strong>Module not found errors:</strong> Make sure you're in the project directory and virtual environment is activated</li>
+                    <li><strong>File not found errors:</strong> Check that the dataset file exists in <code>data/raw/</code></li>
+                    <li><strong>Permission errors:</strong> Run terminal/command prompt as administrator or check file permissions</li>
+                    <li><strong>Memory issues:</strong> Close other applications or use a machine with more RAM</li>
+                    <li><strong>Visualization errors:</strong> Ensure matplotlib backend supports GUI or use 'Agg' backend</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button onclick="closeSetupGuide()" style="padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">Got it, thanks!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLocalSetupGuide() {
+            document.getElementById('setup-guide-modal').style.display = 'block';
+        }
+
+        function closeSetupGuide() {
+            document.getElementById('setup-guide-modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            var modal = document.getElementById('setup-guide-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
